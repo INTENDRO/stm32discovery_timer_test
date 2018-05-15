@@ -51,17 +51,17 @@ void wait1ms(uint16_t u16Factor)
 void timer3PWMInit(void)
 {
     RCC->APB1ENR |= RCC_APB1ENR_TIM3EN;
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOGEN;
+    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
     
-    GPIOG->MODER |= GPIO_MODER_MODE14_1;
-    GPIOG->AFR[1] |= GPIO_AFRH_AFSEL14_1;
+    GPIOA->MODER |= GPIO_MODER_MODE6_1;
+    GPIOA->AFR[0] |= GPIO_AFRL_AFRL6_1;
     
     TIM3->CR1 = 0;
     TIM3->CR2 = 0;
     TIM3->SMCR = 0;
     TIM3->DIER = 0;
     
-    TIM3->PSC = 6;
+    TIM3->PSC = 5;
     TIM3->EGR = (1<<0);
     TIM3->ARR = 60000;
     TIM3->CCMR1 = (0x6<<4);
@@ -83,13 +83,15 @@ int main(void)
 	
 	timer9Init();
     
-    timer3PWMInit();
+  timer3PWMInit();
 	
 	while(1)
 	{
 		GPIOG->ODR |= GPIO_ODR_OD13;
+		TIM3->PSC = 5;
 		wait1ms(1000);
 		GPIOG->ODR &= ~GPIO_ODR_OD13;
+		TIM3->PSC = 6;
 		wait1ms(1000);
 	}
 }
